@@ -36,23 +36,23 @@ app.get('/signup', (req, res) => {
 
 // Handle sign-up form submission
 app.post('/signup', async (req, res) => {
-const { username, password } = req.body;
+  const { username, password } = req.body;
 
-// Check if the user already exists
-const existingUser = await User.findOne({ username });
-if (existingUser) {
-    return res.send('Username already taken. Please choose another.');
-}
+  // Check if the user already exists
+  const existingUser = await User.findOne({ username });
+  if (existingUser) {
+      return res.send('Username already taken. Please choose another.');
+  }
 
-// Create a new user and save to the database
-const newUser = new User({ username, password });
-await newUser.save();
+  // Create a new user and save to the database
+  const newUser = new User({ username, password });
+  await newUser.save();
 
-// Log the user in (store in session)
-req.session.user = newUser;
+  // Log the user in (store in session)
+  req.session.user = newUser;
 
-// Redirect to the dashboard
-res.redirect('/dashboard');
+  // Redirect to the dashboard
+  res.redirect('/dashboard');
 });
 
 
