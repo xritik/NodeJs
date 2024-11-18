@@ -4,6 +4,7 @@ import Login from './Login';
 import SignUp from './SignUp'
 import Dashboard from './Dashboard'
 import Missing from './Missing';
+import Chat from './Chat';
 
 function App() {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ function App() {
         <Route path="/signup" element={<SignUp navigate={navigate} signupMessage={signupMessage} setLoginUser={setLoginUser} />} />
         <Route path="/login" element={<Login navigate={navigate} signupMessage={signupMessage} setLoginUser={setLoginUser} />} />
         <Route path="/dashboard" element={<Dashboard navigate={navigate} setSignupMessage={setSignupMessage} loginUser={loginUser} logout={logout} />} />
+        <Route path="/chat" element={<Chat navigate={navigate} />} />
         <Route path='*' element={<Missing />} />
       </Routes>
     </div>

@@ -8,7 +8,9 @@ const SignUp = ({signupMessage, setLoginUser, navigate}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [gender, setGender] = useState('');
 
+  // localStorage.removeItem('loginUser')
   const signUp = async () => {
     try{
       const response = await fetch('http://localhost:8080/signup', {
@@ -16,7 +18,7 @@ const SignUp = ({signupMessage, setLoginUser, navigate}) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({fullname, username, password})
+        body: JSON.stringify({fullname, gender, username, password})
       });
       const data = await response.json()
       if(response.ok){
@@ -45,11 +47,35 @@ const SignUp = ({signupMessage, setLoginUser, navigate}) => {
                         type="text" 
                         placeholder="Enter your full-name"  
                         required
+                        autoFocus
                         value={fullname}
                         onChange={(e) => setFullname(e.target.value)}
                     />
                 </label>
 
+                <label>
+                    <span className="gender-options">
+                    Gender:
+                        <label className="circle-option">
+                            <input
+                                type="radio"
+                                value="Male"
+                                checked={gender === 'Male'}
+                                onChange={(e) => setGender(e.target.value)}
+                            />
+                             Male
+                        </label>
+                        <label className="circle-option">
+                            <input
+                                type="radio"
+                                value="Female"
+                                checked={gender === 'Female'}
+                                onChange={(e) => setGender(e.target.value)}
+                            />
+                            Female
+                        </label>
+                    </span>
+                </label>
                 <label>
                 Username:
                 <input 
@@ -57,7 +83,7 @@ const SignUp = ({signupMessage, setLoginUser, navigate}) => {
                     placeholder="Enter username"  
                     required
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value.trim())}
                 />
                 </label>
         
@@ -68,7 +94,7 @@ const SignUp = ({signupMessage, setLoginUser, navigate}) => {
                     placeholder="Enter password" 
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value.trim())}
                 />
                 </label>
         

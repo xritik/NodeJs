@@ -7,6 +7,7 @@ const Login = ({signupMessage, navigate, setLoginUser}) => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
+//   localStorage.removeItem('loginUser')
   const login = async () => {
     try {
         const response = await fetch('http://localhost:8080/login', {
@@ -44,8 +45,9 @@ const Login = ({signupMessage, navigate, setLoginUser}) => {
                         type="text" 
                         placeholder="Enter username"  
                         required
+                        autoFocus
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value.trim())}
                     />
                 </label>
 
@@ -56,7 +58,7 @@ const Login = ({signupMessage, navigate, setLoginUser}) => {
                     placeholder="Enter password" 
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value.trim())}
                     />
                 </label>
 
