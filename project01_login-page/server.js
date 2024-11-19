@@ -26,7 +26,7 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     // Check if the user exists in the database
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username, password });
 
     if (user) {
         res.status(200).json({ message: `Login successful ${username}` });
@@ -54,5 +54,24 @@ app.post('/sign-in', async (req, res) => {
         res.status(500).json({ message: 'An error occurred while creating the user' });
     }
 });
+
+
+// Route to get all users
+app.get('/users', async (req, res) => {
+    try {
+        const users = await User.find(); // Fetch all users
+        res.status(200).json(users); // Send users data as JSON
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ message: 'Error fetching users' });
+    }
+});
+
+app.delete('/users/:id', async (req, res) => {
+    const {id} = req.params;
+    const result = await User.findByIdAndDelete(id);
+})
+
+  
 
 app.listen(PORT, () => console.log('Server is running at port', PORT));

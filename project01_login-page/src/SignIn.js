@@ -34,7 +34,7 @@ const SignIn = ({navigate, setLoginUser}) => {
 
   return (
     <div className='login-section'>
-      <h1>Sign in</h1>
+      <h1>Sign up</h1>
       <form className="login-form" onSubmit={(e) => {e.preventDefault(); signIn()}}>
 
         <label>
@@ -71,8 +71,8 @@ const SignIn = ({navigate, setLoginUser}) => {
             />
         </div>
 
-        <button type="submit">Sign in</button>
-      <div>Already have account? <Link to={'/login'}> Login</Link></div>
+        <button type="submit">Sign up</button>
+      <div>Already have account? <Link to={'/login'}> Login here</Link></div>
       </form>
       {message && <p style={{marginTop: '10px'}}>{message}</p>}
 

@@ -2,36 +2,36 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Login = ({navigate, setLoginUser}) => {
-    const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-    const login = async () => {
-      try {
-          const response = await fetch('http://localhost:8080/login', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ username, password }),
-          });
+  const login = async () => {
+    try {
+        const response = await fetch('http://localhost:8080/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password })
+        });
 
-          const data = await response.json();
-          if (response.ok) {
-              setMessage(data.message); // Success message
-              // Optionally, redirect the user to a dashboard or another page
-              setLoginUser(username)
-              navigate('/dashboard');
-          } else {
-              setMessage(data.message); // Error message
-          }
-      } catch (error) {
-          console.error("Error logging in:", error);
-          setMessage('An error occurred. Please try again.');
-      }
+        const data = await response.json();
+        if (response.ok) {
+            setMessage(data.message); // Success message
+            // Optionally, redirect the user to a dashboard or another page
+            setLoginUser(username)
+            navigate('/dashboard');
+        } else {
+            setMessage(data.message); // Error message
+        }
+    } catch (error) {
+        console.error("Error logging in:", error);
+        setMessage('An error occurred. Please try again.');
     }
+  }
 
 
   return (
@@ -73,7 +73,7 @@ const Login = ({navigate, setLoginUser}) => {
         </div>
 
         <button type="submit">Login</button>
-      <div>Create new account? <Link to={'/sign-in'}> Sign in</Link></div>
+      <div>Create new account? <Link to={'/sign-in'}> Sign up</Link></div>
       </form>
       {message && <p style={{marginTop: '10px'}}>{message}</p>}
     </div>

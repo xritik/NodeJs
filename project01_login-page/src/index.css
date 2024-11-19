@@ -87,3 +87,13 @@ button {
 button:hover {
   background-color: #45a049;
 }
+
+.userDelete{
+  background-color: red;
+  padding: 5px;
+  font-size: 12px;
+  margin-left: 10px;
+}
+.userDelete:hover{
+  background-color: rgb(201, 0, 0);
+}

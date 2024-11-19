@@ -4,6 +4,7 @@ import SignIn from './SignIn';
 import Dashboard from './Dashboard';
 import Missing from './Missing';
 import { useState } from 'react';
+import Users from './Users';
 
 function App() {
   const [loginUser, setLoginUser] = useState('');
@@ -16,6 +17,7 @@ function App() {
         <Route path="/login" element={<Login setLoginUser={setLoginUser} navigate={navigate} />} />
         <Route path="/sign-in" element={<SignIn setLoginUser={setLoginUser} navigate={navigate} />} />
         <Route path="/dashboard" element={<Dashboard loginUser={loginUser} />} />
+        <Route path="/users" element={<Users />} />
         <Route path='*' element={<Missing />} />
       </Routes>
     </div>
