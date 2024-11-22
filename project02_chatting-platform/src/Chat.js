@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import male from './imgs/male.jpg';
 import female from './imgs/female.jpg';
@@ -91,6 +91,22 @@ const Chat = ({ navigate }) => {
         fetchMessages();
     }, [currentChat]);
 
+
+
+
+
+    const bottomRef = useRef(null);
+
+    useEffect(() => {
+        // Scroll to the bottom when the component mounts
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+
+
+
+
+
     const sendMessage = async () => {
         try {
             const response = await fetch('http://localhost:8080/chat/send', {
@@ -113,18 +129,16 @@ const Chat = ({ navigate }) => {
   return (
     <div>
         <nav>
-            <div className='welcomeuser' style={{width: '10%', fontSize: '28px'}}>Chat.hub</div>
-            <div className='welcomeuser' style={{width: '80%'}}>
-            </div> 
+            <div className='chatBrand'>Chat.hub</div>
         </nav>
         <div>
-            <Link to={'/dashboard'}><i className='bx bx-arrow-back' style={{fontSize: '30px', color: 'black'}}></i></Link>
             <div className='chat-section'>
                 {isLoading && <p style={{marginTop: '10px', textAlign: 'center'}}>Loading...</p>}
                 {!isLoading && (
                     <>
                         <div className="chat">
                             <div className='userId'>
+                                <Link to={'/dashboard'} className='backArrow'><i className='bx bx-arrow-back' style={{fontSize: '30px', color: 'black'}}></i></Link>
                                 <span className="userPic">
                                     <img src={userToChatDetail.gender === 'Female' ? female : male} alt="profile" />
                                 </span>
@@ -140,14 +154,15 @@ const Chat = ({ navigate }) => {
                                 </div>
                                 {errorMessage && <p className="errorMessage">{errorMessage}</p>}
                             
-                                    {messages.map((msg, index) => (
-                                        <div key={index} className={`message ${msg.sender === loginUser ? 'sent' : 'received'}`}>
-                                            <p className="messageContent" style={{backgroundColor: `${msg.sender === loginUser ? 'purple' : 'green'}`}}>
-                                            <span>{msg.message}</span>
-                                            <small>{new Date(msg.timestamp).toLocaleTimeString().slice(0, 5)}</small>
-                                            </p>
-                                        </div>
-                                    ))}
+                                {messages.map((msg, index) => (
+                                    <div key={index} className={`message ${msg.sender === loginUser ? 'sent' : 'received'}`}>
+                                        <p className="messageContent" style={{backgroundColor: `${msg.sender === loginUser ? 'purple' : 'green'}`}}>
+                                        <span>{msg.message}</span>
+                                        <small>{new Date(msg.timestamp).toLocaleTimeString().slice(0, 5)}</small>
+                                        </p>
+                                    </div>
+                                ))}
+                                <div ref={bottomRef}></div>
                             </div>
                             
                             <form className='messageForm' onSubmit={(e) => {e.preventDefault(); sendMessage()}}>

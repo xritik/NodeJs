@@ -102,7 +102,7 @@ const Dashboard = ({ navigate, setSignupMessage, loginUser, logout }) => {
     return (
         <div>
             <nav>
-                <div className='welcomeuser' style={{width: '10%', fontSize: '28px'}}>Chat.hub</div>
+                <div className='appname'>Chat.hub</div>
                 <div className='welcomeuser' style={{width: '80%'}}>
                     {isLoading ? 'Loading user info...' : `Welcome ${(gender === 'Female' ? 'Mrs.'  : 'Mr.')} ${fullname}!`}
                 </div>
