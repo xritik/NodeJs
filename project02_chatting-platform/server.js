@@ -105,4 +105,100 @@ app.get('/chat', async (req, res) => {
 });
 
 
+
+const chatSchema = new mongoose.Schema({
+    users: {
+        type: [String], // Array of usernames involved in the chat
+        required: true,
+        validate: {
+            validator: (array) => array.length === 2,
+            message: 'A chat must involve exactly two users.',
+        },
+    },
+    messages: [
+        {
+            sender: {
+                type: String, // Username of the sender
+                required: true,
+            },
+            message: {
+                type: String, // Content of the message
+                required: true,
+            },
+            timestamp: {
+                type: Date, // Timestamp of when the message was sent
+                default: Date.now,
+            },
+        },
+    ],
+}, { timestamps: true }); // Automatically adds `createdAt` and `updatedAt` fields
+
+const Chat = mongoose.model('Chat', chatSchema);
+chatSchema.index({ users: 1 }, { unique: true });
+(async () => {
+    await Chat.syncIndexes();
+})();
+
+
+module.exports = Chat;
+
+app.post('/chat/start', async (req, res) => {
+    const { loginUser, userToChat } = req.body;
+
+    // Normalize the users array
+    const sortedUsers = [loginUser, userToChat].sort();
+
+    try {
+        // Find or create the chat
+        let chat = await Chat.findOne({ users: sortedUsers });
+        if (!chat) {
+            // Create a new chat if it doesn't exist
+            chat = new Chat({
+                users: sortedUsers,
+                messages: [],
+            });
+            await chat.save();
+        }
+
+        res.status(200).json(chat);
+    } catch (error) {
+        res.status(500).json({ error: 'Error creating or retrieving chat' });
+    }
+});
+
+
+
+app.post('/chat/send', async (req, res) => {
+    const { chatId, sender, message } = req.body;
+
+    try {
+        const chat = await Chat.findById(chatId);
+        chat.messages.push({ sender, message, timestamp: new Date() });
+        await chat.save();
+
+        res.status(200).json({ success: true, message: 'Message sent!' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error sending message' });
+    }
+});
+
+app.get('/api/chat/:chatId', async (req, res) => {
+    const { chatId } = req.params;
+
+    try {
+        const chat = await Chat.findById(chatId);
+        if (!chat) {
+            return res.status(404).json({ error: 'Chat not found' });
+        }
+
+        res.status(200).json(chat.messages);
+    } catch (error) {
+        res.status(500).json({ error: 'Error retrieving messages' });
+    }
+});
+
+
+
+
+
 app.listen(PORT, () => console.log('Server is running at port', PORT));

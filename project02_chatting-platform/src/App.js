@@ -27,6 +27,9 @@ function App() {
     setLoginUser(''); // Clear loginUser state
     localStorage.removeItem('loginUser'); // Remove user from localStorage
     navigate('/login'); // Redirect to the homepage or login
+    localStorage.removeItem('currentChat');
+    localStorage.removeItem('storedAllUsers');
+    localStorage.removeItem('storedUserToChat');
   };
 
 

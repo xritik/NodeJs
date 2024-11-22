@@ -3,58 +3,110 @@ import { Link } from 'react-router-dom';
 import male from './imgs/male.jpg';
 import female from './imgs/female.jpg';
 
-const Chat = ({navigate}) => {
-    const userToChat = localStorage.getItem('storedUserToChat');
+const Chat = ({ navigate }) => {
     const loginUser = localStorage.getItem('loginUser');
-    const [message, setMessage] = useState('');
+    const userToChat = localStorage.getItem('storedUserToChat');
+    const [currentChat, setCurrentChat] = useState(() => JSON.parse(localStorage.getItem('currentChat')) || null);
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [userToChatDetail, setUserToChatDetail] = useState({});
     const [allUsers, setAllUsers] = useState([]);
-    const [otherUserDetail, setOtherUserDetail] = useState({});
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const response = await fetch('http://localhost:8080/chat', {
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
+                    headers: { 'Content-Type': 'application/json' },
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    setTimeout(() => {
-                        setAllUsers(data.users)
-                        setIsLoading(false); // Stop loading
-                    }, 2000);
+                    setAllUsers(data.users);
+                    localStorage.setItem('storedAllUsers', JSON.stringify(data.users));
                 } else {
-                    setMessage('Something went wrong!!');
-                    setTimeout(() => {
-                        // navigate('/login');
-                    }, 3000);
+                    setErrorMessage('Something went wrong!!');
                 }
             } catch (err) {
                 console.error('Error fetching user data:', err);
-                setMessage('An error occurred, Please try again');
-                setTimeout(() => {
-                    // navigate('/login');
-                }, 3000);
+                setErrorMessage('An error occurred, Please try again');
             }
         };
-    
         fetchUserData();
-    }, [loginUser, navigate]); // Include all dependencies in the dependency array.
+    }, []);
 
     useEffect(() => {
-        // Ensure allUsers has data before filtering
-        if (allUsers.length > 0) {
-            const matchedUser = allUsers.find((user) => user.username === userToChat);
-            setOtherUserDetail(matchedUser || {}); // Set an empty object if no match is found
+        const matchedUser = allUsers.find((user) => user.username === userToChat);
+        if (matchedUser) {
+            setUserToChatDetail(matchedUser);
+            setErrorMessage('');
+        } else {
+            setErrorMessage('User not found!');
         }
+        setIsLoading(false);
     }, [allUsers, userToChat]);
-    
-    console.log(otherUserDetail?.fullname); // Use optional chaining to avoid runtime errors
-    
+
+    useEffect(() => {
+        const showChats = async () => {
+            if (!currentChat && userToChatDetail.username) {
+                try {
+                    const response = await fetch('http://localhost:8080/chat/start', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ loginUser, userToChat }),
+                    });
+
+                    if (response.ok) {
+                        const chat = await response.json();
+                        setCurrentChat(chat);
+                        localStorage.setItem('currentChat', JSON.stringify(chat));
+                    }
+                } catch (error) {
+                    console.error('Error opening chat:', error);
+                }
+            }
+        };
+
+        showChats();
+    }, [userToChatDetail, userToChatDetail.username]);
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            if (currentChat && currentChat._id) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/chat/${currentChat._id}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setMessages(data);
+                    }
+                } catch (error) {
+                    console.error('Error fetching messages:', error);
+                }
+            }
+        };
+
+        fetchMessages();
+    }, [currentChat]);
+
+    const sendMessage = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/chat/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chatId: currentChat._id, sender: loginUser, message: newMessage }),
+            });
+
+            if (response.ok) {
+                const sentMessage = { sender: loginUser, message: newMessage, timestamp: new Date() };
+                setMessages((prev) => [...prev, sentMessage]);
+                setNewMessage('');
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    };
 
 
   return (
@@ -62,7 +114,7 @@ const Chat = ({navigate}) => {
         <nav>
             <div className='welcomeuser' style={{width: '10%', fontSize: '28px'}}>Chat.hub</div>
             <div className='welcomeuser' style={{width: '80%'}}>
-            </div>
+            </div> 
         </nav>
         <div>
             <Link to={'/dashboard'}><i className='bx bx-arrow-back' style={{fontSize: '30px', color: 'black'}}></i></Link>
@@ -70,17 +122,48 @@ const Chat = ({navigate}) => {
                 {isLoading && <p style={{marginTop: '10px', textAlign: 'center'}}>Loading...</p>}
                 {!isLoading && (
                     <>
-                        <div className='chat'>
-                            <div className='userProfile'>
-                                <span className='profilePic'>
-                                    <img src={otherUserDetail.gender === 'Female' ? female : male} alt="img" />
+                        <div className="chat">
+                            <div className='userId'>
+                                <span className="userPic">
+                                    <img src={userToChatDetail.gender === 'Female' ? female : male} alt="profile" />
                                 </span>
-                                <span style={{ fontWeight: 'bold', paddingTop: '7px' }}>
-                                    {otherUserDetail?.fullname || 'Loading...'}
-                                </span>
+                                <span className="chatUsername">{userToChatDetail?.fullname || 'Loading...'} <i class='bx bxs-badge-check'></i></span>
                             </div>
+                            <div className="messages">
+                                <div className="userProfile">
+                                    <span className="profilePic">
+                                        <img src={userToChatDetail.gender === 'Female' ? female : male} alt="profile" />
+                                    </span>
+                                    <span className="userName">{userToChatDetail?.fullname || 'Loading...'}</span>
+                            
+                                </div>
+                                {errorMessage && <p className="errorMessage">{errorMessage}</p>}
+                            
+                                    {messages.map((msg, index) => (
+                                        <div key={index} className={`message ${msg.sender === loginUser ? 'sent' : 'received'}`}>
+                                            <p className="messageContent" style={{backgroundColor: `${msg.sender === loginUser ? 'purple' : 'green'}`}}>
+                                            <span>{msg.message}</span>
+                                            <small>{new Date(msg.timestamp).toLocaleTimeString().slice(0, 5)}</small>
+                                            </p>
+                                        </div>
+                                    ))}
+                            </div>
+                            
+                            <form className='messageForm' onSubmit={(e) => {e.preventDefault(); sendMessage()}}>
+                                <input
+                                type="text"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                autoFocus
+                                placeholder="Type your message"
+                                className="messageInput"
+                                />
+                                {/* <button onClick={sendMessage} className="sendButton">Send</button> */}
+                                <span className='sendButton'><i class='bx bxs-send' type='button' onClick={sendMessage}></i></span>
+                            </form>
+                            
                         </div>
-                    </>
+                    </>                  
                 )}
             </div>
         </div>

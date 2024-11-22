@@ -49,6 +49,9 @@ const Dashboard = ({ navigate, setSignupMessage, loginUser, logout }) => {
 
 
     const fetchUsers = async () => {
+        localStorage.removeItem('currentChat');
+        localStorage.removeItem('storedAllUsers');
+        localStorage.removeItem('storedUserToChat');
         setIsUsersLoading(true);
         try {
             const response = await fetch('http://localhost:8080/dashboard', {
@@ -90,7 +93,9 @@ const Dashboard = ({ navigate, setSignupMessage, loginUser, logout }) => {
     const handleToChat = (userToChat) => {
         localStorage.setItem('storedUserToChat', userToChat);
         // console.log(localStorage.getItem('storedUserToChat'));
-        navigate('/chat')
+        // setTimeout(() => {
+            navigate('/chat')
+        // }, 2000);
     }
 
 
@@ -113,7 +118,7 @@ const Dashboard = ({ navigate, setSignupMessage, loginUser, logout }) => {
                     <>
                         <p className='para' style={{paddingTop: '30px'}}>This desktop application serves as a user-friendly chatting platform designed for registered users to connect and communicate with one another.</p>
                         <p className='para' style={{marginTop: '-7px'}}>So just click on '<b>Chat with others</b>' and get some registered sweet people like you to chat.</p>
-                        {showButton && <div className='button-div' onClick={fetchUsers}><button className='dashboard-button'>Chat with others</button></div>}
+                        {showButton && <div className='button-div'><button className='dashboard-button' onClick={fetchUsers}>Chat with others</button></div>}
                         {message && <p style={{marginTop: '15px', textAlign: 'center'}}>{message}</p>}
                         {isUsersLoading && <p style={{marginTop: '10px', textAlign: 'center'}}>Loading Users...</p>}
                         {(allUsers.length !== 0) && 
@@ -128,7 +133,7 @@ const Dashboard = ({ navigate, setSignupMessage, loginUser, logout }) => {
                                                     <img src={(user.gender === 'Female') ? female : male} alt="img" />
                                                 </span>
                                                 <div className="user-info">
-                                                    <span className="fullname">{user.fullname} {user.username === 'ritik' && (<p style={{display: 'inline', color: 'grey'}}>(Admin)</p>)}</span>
+                                                    <span className="fullname">{user.fullname} {user.username === 'ritik' && (<p style={{display: 'inline', color: 'grey'}}>(Admin)</p>)}  <i class='bx bxs-badge-check'></i></span>
                                                     <span className="username"><i>{user.username}</i></span>
                                                 </div>
                                             </div>
