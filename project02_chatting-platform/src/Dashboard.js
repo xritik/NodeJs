@@ -133,7 +133,7 @@ const Dashboard = ({ navigate, setSignupMessage, loginUser, logout }) => {
                                                     <img src={(user.gender === 'Female') ? female : male} alt="img" />
                                                 </span>
                                                 <div className="user-info">
-                                                    <span className="fullname">{user.fullname} {user.username === 'ritik' && (<p style={{display: 'inline', color: 'grey'}}>(Admin)</p>)}  <i class='bx bxs-badge-check'></i></span>
+                                                    <span className="fullname">{user.fullname} {user.username === 'ritik' && (<p style={{display: 'inline', color: 'grey'}}>(Admin)</p>)}  <i className='bx bxs-badge-check'></i></span>
                                                     <span className="username"><i>{user.username}</i></span>
                                                 </div>
                                             </div>

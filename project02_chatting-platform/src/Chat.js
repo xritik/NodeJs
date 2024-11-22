@@ -57,6 +57,7 @@ const Chat = ({ navigate }) => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ loginUser, userToChat }),
                     });
+                    console.log('first')
 
                     if (response.ok) {
                         const chat = await response.json();
@@ -70,7 +71,7 @@ const Chat = ({ navigate }) => {
         };
 
         showChats();
-    }, [userToChatDetail, userToChatDetail.username]);
+    }, [userToChatDetail?.username, loginUser, userToChat]);
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -127,7 +128,7 @@ const Chat = ({ navigate }) => {
                                 <span className="userPic">
                                     <img src={userToChatDetail.gender === 'Female' ? female : male} alt="profile" />
                                 </span>
-                                <span className="chatUsername">{userToChatDetail?.fullname || 'Loading...'} <i class='bx bxs-badge-check'></i></span>
+                                <span className="chatUsername">{userToChatDetail?.fullname || 'Loading...'} <i className='bx bxs-badge-check'></i></span>
                             </div>
                             <div className="messages">
                                 <div className="userProfile">
@@ -159,7 +160,7 @@ const Chat = ({ navigate }) => {
                                 className="messageInput"
                                 />
                                 {/* <button onClick={sendMessage} className="sendButton">Send</button> */}
-                                <span className='sendButton'><i class='bx bxs-send' type='button' onClick={sendMessage}></i></span>
+                                <span className='sendButton'><i className='bx bxs-send' type='button' onClick={sendMessage}></i></span>
                             </form>
                             
                         </div>

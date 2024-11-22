@@ -134,7 +134,7 @@ const chatSchema = new mongoose.Schema({
 }, { timestamps: true }); // Automatically adds `createdAt` and `updatedAt` fields
 
 const Chat = mongoose.model('Chat', chatSchema);
-chatSchema.index({ users: 1 }, { unique: true });
+chatSchema.index({ users: 1 });
 (async () => {
     await Chat.syncIndexes();
 })();
@@ -151,7 +151,7 @@ app.post('/chat/start', async (req, res) => {
     try {
         // Find or create the chat
         let chat = await Chat.findOne({ users: sortedUsers });
-        if (!chat) {
+        if (chat === null) {
             // Create a new chat if it doesn't exist
             chat = new Chat({
                 users: sortedUsers,
@@ -159,7 +159,7 @@ app.post('/chat/start', async (req, res) => {
             });
             await chat.save();
         }
-
+        
         res.status(200).json(chat);
     } catch (error) {
         res.status(500).json({ error: 'Error creating or retrieving chat' });
