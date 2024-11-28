@@ -10,7 +10,7 @@ function App() {
   const navigate = useNavigate();
   const [signupMessage, setSignupMessage] = useState('')
   const [loginUser, setLoginUser] = useState(localStorage.getItem('loginUser') || '');
-  console.log(loginUser);
+  console.log('LoginUser:- ',loginUser);
 
 
   // Save loginUser to localStorage whenever it changes

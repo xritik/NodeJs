@@ -17,7 +17,7 @@ const Chat = ({ navigate }) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch('http://localhost:8080/chat', {
+                const response = await fetch('http://localhost:8080/users', {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
                 });
@@ -57,7 +57,6 @@ const Chat = ({ navigate }) => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ loginUser, userToChat }),
                     });
-                    console.log('first')
 
                     if (response.ok) {
                         const chat = await response.json();
@@ -77,7 +76,7 @@ const Chat = ({ navigate }) => {
         const fetchMessages = async () => {
             if (currentChat && currentChat._id) {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/chat/${currentChat._id}`);
+                    const response = await fetch(`http://localhost:8080/chat/${currentChat._id}`);
                     if (response.ok) {
                         const data = await response.json();
                         setMessages(data);
